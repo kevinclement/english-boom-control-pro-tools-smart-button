@@ -16,7 +16,6 @@ from adafruit_debouncer import Debouncer
 from adafruit_hid.keycode import Keycode
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
-import usb_hid_map as usb
 
 print("KEYBRD BY kevinc loaded")
 
@@ -87,18 +86,17 @@ while True:
                 RECORDING = False
                 print("STOPPING recording")
                 # Send SPACE to STOP                
-                kbd.send(usb.SPACE)            
+                kbd.send(Keycode.SPACE)
             else:
                 RECORDING = True
                 print("STARTING recording")
                 # Send F12 for RECORD PUNCH (start)
-                # alternative is usb.COMMAND usb.SPACE                
-                kbd.send(usb.F12)            
+                kbd.send(Keycode.F12)
             led.value = LED_ON if RECORDING else LED_OFF
         elif click_count == 2:
             print("Undo detected!")
             # Send Command+Z for undo
-            kbd.send(usb.COMMAND, usb.Z)
+            kbd.send(Keycode.COMMAND, Keycode.Z)
         click_count = 0
 
     time.sleep(0.01)  # Small delay to reduce CPU usage
