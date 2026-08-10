@@ -86,16 +86,19 @@ while True:
             if RECORDING:
                 RECORDING = False
                 print("STOPPING recording")
+                # Send SPACE to STOP                
+                kbd.send(usb.SPACE)            
             else:
                 RECORDING = True
                 print("STARTING recording")
                 # Send F12 for RECORD PUNCH (start)
-                # alternative is usb.COMMAND usb.SPACE
-                # TODO: restore before going live
-                #kbd.send(usb.F12)            
+                # alternative is usb.COMMAND usb.SPACE                
+                kbd.send(usb.F12)            
             led.value = LED_ON if RECORDING else LED_OFF
         elif click_count == 2:
-            print("Double click detected!")
+            print("Undo detected!")
+            # Send Command+Z for undo
+            kbd.send(usb.COMMAND, usb.Z)
         click_count = 0
 
     time.sleep(0.01)  # Small delay to reduce CPU usage
