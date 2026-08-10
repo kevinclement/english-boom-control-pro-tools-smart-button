@@ -1,3 +1,12 @@
+# Yeah so, there are four commands that I need. 
+#
+#   Command space bar=record 
+#   Space bar=stop 
+#   Enter=back to beginning of song 
+#   Command z=undo 
+
+# If you could make them hit once, twice, three times, and four times, that would work fine. Or if you have a different way to do it. 
+
 import time
 import board
 import digitalio
@@ -33,16 +42,15 @@ while True:
         time.sleep(0.3)
         while not btn1.value:
             pass
-        print("btn 1 pressed!!!")
         if RECORDING:
             RECORDING = False
             print("stoping recording")
         else:
             RECORDING = True
             print("starting recording")
+            # Send F12 for RECORD PUNCH (start)
+            # alternative is usb.COMMAND usb.SPACE
+            kbd.send(usb.F12)            
         led.value = LED_ON if RECORDING else LED_OFF
         # led.value = LED_ON
     time.sleep(0.2)  # Write your code here :-)
-
-    print("btn 3 value: " + str(btn1.value))
-    print("RECORDING " + str(RECORDING))
