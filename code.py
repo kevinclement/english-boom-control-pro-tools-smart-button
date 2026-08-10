@@ -21,6 +21,9 @@ print("KEYBRD BY kevinc loaded")
 LED_OFF = True
 LED_ON = False
 RECORDING = False
+DEBOUNCE_SECONDS = 0.05
+DOUBLE_CLICK_SECONDS = 0.5
+pending_click_time = None
 
 # configure led for button
 led = digitalio.DigitalInOut(board.GP26)
@@ -31,17 +34,36 @@ led.value = LED_OFF
 btn1 = digitalio.DigitalInOut(board.GP27)
 btn1.direction = digitalio.Direction.INPUT
 btn1.pull = digitalio.Pull.DOWN
+raw_button_value = btn1.value
+stable_button_value = raw_button_value
+button_change_time = time.monotonic()
 
 # Set up keyboard and mouse.
 kbd = Keyboard(usb_hid.devices)
 layout = KeyboardLayoutUS(kbd)
 
 while True:
-    if not btn1.value:
-        # Debounce
-        time.sleep(0.3)
-        while not btn1.value:
-            pass
+    button_value = btn1.value
+    current_time = time.monotonic()
+
+    if button_value != raw_button_value:
+        raw_button_value = button_value
+        button_change_time = current_time
+
+    if (raw_button_value != stable_button_value and
+            current_time - button_change_time >= DEBOUNCE_SECONDS):
+        stable_button_value = raw_button_value
+        if stable_button_value:
+            if (pending_click_time is not None and
+                    current_time - pending_click_time <= DOUBLE_CLICK_SECONDS):
+                pending_click_time = None
+                print("button double clicked")
+            else:
+                pending_click_time = current_time
+
+    if (pending_click_time is not None and
+            current_time - pending_click_time > DOUBLE_CLICK_SECONDS):
+        pending_click_time = None
         if RECORDING:
             RECORDING = False
             print("stoping recording")
@@ -50,7 +72,7 @@ while True:
             print("starting recording")
             # Send F12 for RECORD PUNCH (start)
             # alternative is usb.COMMAND usb.SPACE
-            kbd.send(usb.F12)            
+            kbd.send(usb.F12)
         led.value = LED_ON if RECORDING else LED_OFF
         # led.value = LED_ON
-    time.sleep(0.2)  # Write your code here :-)
+    time.sleep(0.02)  # Write your code here :-)
