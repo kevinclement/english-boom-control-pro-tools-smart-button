@@ -2,7 +2,7 @@
 #
 #   Command space bar=record 
 #   Space bar=stop 
-#   Enter=back to beginning of song 
+# Enter=back to beginning of song 
 #   Command z=undo 
 # Plan: single click, start, stop if started, double click undo, LONG press=back to beginning of song.
 
@@ -22,7 +22,7 @@ print("KEYBRD BY kevinc loaded")
 
 # --- CONFIGURATION ---
 DOUBLE_CLICK_MAX_DELAY = 0.5  # seconds between clicks to count as double click
-LONG_PRESS_TIME = 1.0         # seconds to count as long press
+LONG_PRESS_TIME = 3.0         # seconds to count as long press
 
 LED_OFF = True
 LED_ON = False
@@ -51,7 +51,7 @@ click_count = 0
 press_start_time = None
 long_press_reported = False
 
-print("Double-click detection started. Press the button...")
+print("Protools smart control button by kevinc.")
 
 while True:
     switch.update()
@@ -62,7 +62,7 @@ while True:
         long_press_reported = False
 
         now = press_start_time
-        if now - last_click_time <= DOUBLE_CLICK_MAX_DELAY:
+        if now - last_click_time<= DOUBLE_CLICK_MAX_DELAY:
             click_count += 1
         else:
             click_count = 1
