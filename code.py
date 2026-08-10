@@ -16,8 +16,44 @@ from adafruit_debouncer import Debouncer
 from adafruit_hid.keycode import Keycode
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
+import pwmio
 
 print("KEYBRD BY kevinc loaded")
+
+# # On the Cytron Maker Pi Pico, the buzzer is hardwired to GP22
+# BUZZER_PIN = board.GP18
+
+# # Initialize PWM out on the buzzer pin with variable frequency enabled
+# buzzer = pwmio.PWMOut(BUZZER_PIN, variable_frequency=True)
+
+# def play_tone(frequency, duration):
+#     """Plays a specific frequency for a given duration in seconds."""
+#     if frequency == 0:
+#         buzzer.duty_cycle = 0  # Silence
+#     else:
+#         buzzer.frequency = frequency
+#         # 50% duty cycle creates a clean square wave sound (65535 // 2)
+#         buzzer.duty_cycle = 32768
+    
+#     time.sleep(duration)
+#     buzzer.duty_cycle = 0  # Turn off sound after duration
+
+# # --- Main Loop ---
+# # Scale of frequencies (in Hz) to play: C5, E5, G5, C6
+# scale = [523, 659, 784, 1047]
+
+# print("Playing tones...")
+# play_tone(1200, 0.1)
+# time.sleep(0.08)
+
+# # for freq in scale:
+# #     play_tone(freq, 0.3)      # Play note for 300ms
+# #     time.sleep(0.1)           # Short pause between notes
+
+# # Final cleanup to ensure it stays quiet
+# buzzer.deinit()
+# print("Done!")
+
 
 # --- CONFIGURATION ---
 DOUBLE_CLICK_MAX_DELAY = 0.5  # seconds between clicks to count as double click
@@ -70,7 +106,9 @@ while True:
     # Detect long press while holding
     if not switch.value and press_start_time is not None:
         if not long_press_reported and (time.monotonic() - press_start_time) >= LONG_PRESS_TIME:
-            print("Long press detected!")
+            # Send RETURN for back to beginning of song
+            print("LONG, returning to start.")
+            kbd.send(Keycode.RETURN)            
             long_press_reported = True
             click_count = 0  # Cancel click counting if it's a long press
 
@@ -99,5 +137,5 @@ while True:
             kbd.send(Keycode.COMMAND, Keycode.Z)
         click_count = 0
 
-    time.sleep(0.01)  # Small delay to reduce CPU usage
+    time.sleep(0.1)  # Small delay to reduce CPU usage
     
